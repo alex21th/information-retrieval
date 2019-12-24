@@ -1,0 +1,97 @@
+install.packages("igraph")  # nomes cal un cop per maquina
+library(igraph)  # es com l'import de python
+
+g <- graph( c(1,2, 1,3, 2,3, 3,5), n=5 )
+V(g)
+E(g)
+g <- graph.empty() + vertices(letters[1:10], color="red")
+g <- g + vertices(letters[11:20], color="blue")
+g <- g + edges(sample(V(g), 30, replace=TRUE), color="green")
+V(g)
+E(g)
+
+plot(g)
+
+g <- read.graph("graph.txt", format="edgelist")
+V(g)
+g <- read.graph("graph.txt", format="edgelist", directed=FALSE)
+V(g)
+
+karate <- read.graph("http://cneurocvs.rmki.kfki.hu/igraph/karate.net", format="pajek")
+
+er_graph <- erdos.renyi.game(100, 2/100)
+ws_graph <- watts.strogatz.game(1, 100, 4, 0.05)
+ba_graph <- barabasi.game(100)
+
+plot(er_graph)
+plot(ws_graph)
+plot(ba_graph)
+
+g <- erdos.renyi.game(10, 0.5)
+V(g)$color <- sample( c("red", "black"), vcount(g), rep=TRUE)
+E(g)$color <- "grey"
+red <- V(g)[ color == "red" ]
+bl <- V(g)[ color == "black" ]
+E(g)[ red %--% red ]$color <- "red"
+E(g)[ bl %--% bl ]$color <- "black"
+
+plot(g)
+
+g <- graph.lattice( c(10,10) )
+E(g)$weight <- runif(ecount(g))
+E(g)$color <- "grey"
+E(g)[ weight > 0.9 ]$color <- "red"
+
+plot(g)
+
+er_graph <- erdos.renyi.game(100, 2/100)
+plot(er_graph, vertex.label=NA, vertex.size=3)
+ws_graph <- watts.strogatz.game(1, 100, 4, 0.05)
+plot(ws_graph, layout=layout.circle, vertex.label=NA, vertex.size=3)
+ba_graph <- barabasi.game(100)
+plot(ba_graph, vertex.label=NA, vertex.size=3)
+
+help(igraph.plotting)
+
+g <- graph.lattice( c(10,10) )
+E(g)$weight <- runif(ecount(g))
+E(g)$color <- "grey"
+E(g)[ weight > 0.9 ]$color <- "red"
+plot(g, vertex.size=2, vertex.label=NA, layout=layout.kamada.kawai, edge.width=2+3*E(g)$weight)
+
+g <- graph.lattice( length=100, dim=1, nei=4 )
+average.path.length(g)
+diameter(g)
+#g <- rewire.edges( g, prob=0.05 )
+g <- rewire(g, each_edge(0.05))
+average.path.length(g)
+diameter(g)
+
+ws <- watts.strogatz.game(1, 100, 4, 0.05)
+transitivity(ws)
+p_hat <- ecount(ws)/(vcount(ws)*(vcount(ws))/2)
+p_hat
+er <- erdos.renyi.game(100, p_hat)
+transitivity(er)
+
+g <- graph.ring(10)
+plot(g)
+degree(g)
+ba <- barabasi.game(10000, m=3)
+p_hat <- ecount(ba)/ ((vcount(ba)-1)*vcount(ba)/2)
+er <- erdos.renyi.game(10000, p_hat)
+degree.distribution(er)
+hist(degree(er))
+hist(degree(ba))
+plot(degree.distribution(er))
+plot(degree.distribution(ba))
+
+set.seed(1)
+g <- sample_gnp(10, 3/10)
+plot(g, vertex.size=25, layout=layout.kamada.kawai)
+betweenness(g)
+edge_betweenness(g)
+degree(g)
+closeness(g)
+page.rank(g)$vector
+
